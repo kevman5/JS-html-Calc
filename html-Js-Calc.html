@@ -1,0 +1,195 @@
+<html>
+<div class="calc">
+
+  <input type="text" class="calcInput" value="" disabled />
+
+  <div class="nums">
+    <form Name="calc">
+      <table border=2>
+        <tr>
+          <td colspan=4>
+
+            <body>
+
+
+              <button type="button" class="all-clear" value="all-clear">AC</button>
+        <tr>
+          <td>
+            <button type="button" value="7">7</button>
+
+            <button type="button" value="8">8</button>
+
+            <button type="button" value="9">9</button>
+          <td>
+            <button type="button" class="operator" value="+">+</button>
+          </td>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <button type="button" value="4">4</button>
+
+            <button type="button" value="5">5</button>
+
+            <button type="button" value="6">6</button>
+          </td>
+          <td>
+            <button type="button" class="operator" value="-">-</button>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <button type="button" value="1">1</button>
+
+            <button type="button" value="2">2</button>
+
+            <button type="button" value="3">3</button>
+          </td>
+          <td>
+            <button type="button" class="operator" value="*">&times;</button>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <button type="button" value="0">0</button>
+
+            <button type="button" class="decimal" value=".">.</button>
+
+            <button type="button" class="equal-sign operator" value="=">=</button>
+          <td>
+            <button type="button" class="operator" value="/">&divide;</button>
+          </td>
+
+
+
+          </td>
+          </td>
+        </tr>
+
+        </body>
+
+        </tr>
+  </div>
+</div>
+<script type="text/javascript">
+class calculator {
+
+}
+
+function EnterDigit(digit) {
+  const {
+    showValue,
+    waitForSecondOper
+  } = calculator;
+
+  if (waitForSecondOper === true) {
+    calculator.showValue = digit;
+    calculator.waitForSecondOper = false;
+  } else {
+    calculator.showValue = showValue === '0' ? digit : showValue + digit;
+  }
+}
+
+function Decimal(deci) {
+  if (calculator.waitForSecondOper === true) {
+    calculator.showValue = "0."
+    calculator.waitForSecondOper = false;
+    return
+  }
+
+  if (!calculator.showValue.includes(deci)) {
+    calculator.showValue += deci;
+  }
+}
+
+function Operators(nextOperator) {
+  const {
+    firstOperand,
+    showValue,
+    operator
+  } = calculator
+  const inputValue = parseFloat(showValue);
+
+  if (operator && calculator.waitForSecondOper) {
+    calculator.operator = nextOperator;
+    return;
+  }
+
+
+  if (firstOperand == null && !isNaN(inputValue)) {
+    calculator.firstOperand = inputValue;
+  } else if (operator) {
+    const result = calculate(firstOperand, inputValue, operator);
+
+    calculator.showValue = `${parseFloat(result.toFixed(5))}`;
+    calculator.firstOperand = result;
+  }
+
+  calculator.waitForSecondOper = true;
+  calculator.operator = nextOperator;
+}
+
+function calculate(firstOperand, secondOperand, operator) {
+  if (operator === '+') {
+    return firstOperand + secondOperand;
+  } else if (operator === '-') {
+    return firstOperand - secondOperand;
+  } else if (operator === '*') {
+    return firstOperand * secondOperand;
+  } else if (operator === '/') {
+    return firstOperand / secondOperand;
+  }
+
+  return secondOperand;
+}
+
+function clearit() {
+  calculator.showValue = '0';
+  calculator.firstOperand = null;
+  calculator.waitForSecondOper = false;
+  calculator.operator = null;
+}
+
+function ShowitonScreen() {
+  const display = document.querySelector('.calcInput');
+  display.value = calculator.showValue;
+}
+
+ShowitonScreen();
+
+const keys = document.querySelector('.nums');
+keys.addEventListener('click', event => {
+  const {
+    target
+  } = event;
+  const {
+    value
+  } = target;
+  if (!target.matches('button')) {
+    return;
+  }
+
+  switch (value) {
+    case '/':
+    case '*':
+    case '-':
+    case '+':
+    case '=':
+      Operators(value);
+      break;
+    case '.':
+      Decimal(value);
+      break;
+    case 'all-clear':
+      clearit();
+      break;
+    default:
+      if (Number.isInteger(parseFloat(value))) {
+        EnterDigit(value);
+      }
+  }
+
+  ShowitonScreen();
+});
+</script>
+</html>
